@@ -4,24 +4,8 @@
         <name>WebCrawler</name>
     </assembly>
     <members>
-        <member name="T:WebCrawler.IRobotFilter">
-            <summary> Defines methods for filtering URLs crawled by robot.
-            </summary>
-        </member>
-        <member name="M:WebCrawler.IRobotFilter.CanBeCrawled(System.String)">
-            <summary> Determines if address can be crawled.
-            </summary>
-        </member>
-        <member name="T:WebCrawler.IRobotManager">
-            <summary> Defines methods for starting and stopping internet robot.
-            </summary>
-        </member>
-        <member name="M:WebCrawler.IRobotManager.StartRobot(System.Int32,System.String)">
-            <summary> Starts working threads and sets their parameters.
-            </summary>
-        </member>
-        <member name="M:WebCrawler.IRobotManager.StopRobot">
-            <summary> Stops working threads.
+        <member name="T:WebCrawler.RobotRunner">
+            <summary> Provides methods for crawling pages by one thread.
             </summary>
         </member>
         <member name="T:WebCrawler.IRobotRunner">
@@ -36,28 +20,65 @@
             <summary> Finds uris in crawled page.
             </summary>
         </member>
-        <member name="T:WebCrawler.IRobotStatistics">
-            <summary> Defines methods for statistics saving.
+        <member name="M:WebCrawler.RobotRunner.#ctor(WebCrawler.IRobotFilter,WebCrawler.RobotManager)">
+            <summary> Initializes a new RobotRunner instance and sets its RobotManager and filter.
             </summary>
         </member>
-        <member name="M:WebCrawler.IRobotStatistics.Save(System.String)">
-            <summary> Saves statistics in file specified by path.
+        <member name="M:WebCrawler.RobotRunner.CrawlPage">
+            <summary> Crawls pages until specific conditions happen.
+            Downloads and saves pages to temp folder and searches pages for new URLs to crawl.
             </summary>
         </member>
-        <member name="T:WebCrawler.RobotFilter">
-            <summary> Provides methods for filtering URLs crawled by robot.
+        <member name="M:WebCrawler.RobotRunner.FindUrisInDocument(System.String)">
+            <summary> Checks for Uris in downloaded document.
             </summary>
         </member>
-        <member name="M:WebCrawler.RobotFilter.#ctor(System.String,System.String)">
-            <summary> Initializes a new RobotFilter instance and sets its filters.
+        <member name="T:WebCrawler.Document">
+            <summary> Represents document downloaded from web.
             </summary>
         </member>
-        <member name="M:WebCrawler.RobotFilter.CanBeCrawled(System.String)">
-            <summary> Determines if address can be crawled based on robots.txt rules loaded into this class.
+        <member name="M:WebCrawler.Document.#ctor(System.String)">
+            <summary> Initializes new document with a specified web address.
+            </summary>
+        </member>
+        <member name="M:WebCrawler.Document.AddNeighbour(WebCrawler.Document)">
+            <summary> Adds new document with address found in this document to list.
+            </summary>
+        </member>
+        <member name="M:WebCrawler.Document.Equals(WebCrawler.Document)">
+            <summary> IEquatable Method for comparing document with other documents basing on their web addresses.
+            </summary>
+        </member>
+        <member name="P:WebCrawler.Document.HttpAddress">
+            <summary> Web address of document.
+            </summary>
+        </member>
+        <member name="P:WebCrawler.Document.DiscAddress">
+            <summary> Local address of document.
+            </summary>
+        </member>
+        <member name="P:WebCrawler.Document.Id">
+            <summary> Id of document.
+            </summary>
+        </member>
+        <member name="P:WebCrawler.Document.Neighbours">
+            <summary> List of documents of web addresses found in this document.
             </summary>
         </member>
         <member name="T:WebCrawler.RobotManager">
             <summary> Provides methods for managing robot threads.
+            </summary>
+        </member>
+        <member name="T:WebCrawler.IRobotManager">
+            <summary> Defines methods for starting and stopping internet robot.
+            </summary>
+        </member>
+        <member name="M:WebCrawler.IRobotManager.StartRobot(System.Int32,System.String)">
+            <summary> Starts working threads and sets their parameters.
+            </summary>
+        </member>
+        <member name="M:WebCrawler.IRobotManager.StopRobot">
+            <summary> Stops working threads.
             </summary>
         </member>
         <member name="M:WebCrawler.RobotManager.#ctor">
@@ -101,21 +122,12 @@
             <summary> Occurs when all robot work is finished.
             </summary>
         </member>
-        <member name="T:WebCrawler.RobotRunner">
-            <summary> Provides methods for crawling pages by one thread.
+        <member name="T:WebCrawler.IRobotStatistics">
+            <summary> Defines methods for statistics saving.
             </summary>
         </member>
-        <member name="M:WebCrawler.RobotRunner.#ctor(WebCrawler.IRobotFilter,WebCrawler.RobotManager)">
-            <summary> Initializes a new RobotRunner instance and sets its RobotManager and filter.
-            </summary>
-        </member>
-        <member name="M:WebCrawler.RobotRunner.CrawlPage">
-            <summary> Crawls pages until specific conditions happen.
-            Downloads and saves pages to temp folder and searches pages for new URLs to crawl.
-            </summary>
-        </member>
-        <member name="M:WebCrawler.RobotRunner.FindUrisInDocument(System.String)">
-            <summary> Checks for Uris in downloaded document.
+        <member name="M:WebCrawler.IRobotStatistics.Save(System.String)">
+            <summary> Saves statistics in file specified by path.
             </summary>
         </member>
         <member name="T:WebCrawler.RobotStatistics">
@@ -142,44 +154,32 @@
             <summary> Occurs when statistics are saved.
             </summary>
         </member>
+        <member name="T:WebCrawler.IRobotFilter">
+            <summary> Defines methods for filtering URLs crawled by robot.
+            </summary>
+        </member>
+        <member name="M:WebCrawler.IRobotFilter.CanBeCrawled(System.String)">
+            <summary> Determines if address can be crawled.
+            </summary>
+        </member>
+        <member name="T:WebCrawler.RobotFilter">
+            <summary> Provides methods for filtering URLs crawled by robot.
+            </summary>
+        </member>
+        <member name="M:WebCrawler.RobotFilter.#ctor(System.String,System.String)">
+            <summary> Initializes a new RobotFilter instance and sets its filters.
+            </summary>
+        </member>
+        <member name="M:WebCrawler.RobotFilter.CanBeCrawled(System.String)">
+            <summary> Determines if address can be crawled based on robots.txt rules loaded into this class.
+            </summary>
+        </member>
         <member name="M:WebCrawler.RobotStringExtensions.NormalizeForUrl(System.String)">
             <summary> String extension for removing some specific characters from the string.
             </summary>
         </member>
         <member name="M:WebCrawler.RobotStringExtensions.EscapeUrl(System.String)">
             <summary> String extension for replacing some specific characters from the string.
-            </summary>
-        </member>
-        <member name="T:WebCrawler.Document">
-            <summary> Represents document downloaded from web.
-            </summary>
-        </member>
-        <member name="M:WebCrawler.Document.#ctor(System.String)">
-            <summary> Initializes new document with a specified web address.
-            </summary>
-        </member>
-        <member name="M:WebCrawler.Document.AddNeighbour(WebCrawler.Document)">
-            <summary> Adds new document with address found in this document to list.
-            </summary>
-        </member>
-        <member name="M:WebCrawler.Document.Equals(WebCrawler.Document)">
-            <summary> IEquatable Method for comparing document with other documents basing on their web addresses.
-            </summary>
-        </member>
-        <member name="P:WebCrawler.Document.HttpAddress">
-            <summary> Web address of document.
-            </summary>
-        </member>
-        <member name="P:WebCrawler.Document.DiscAddress">
-            <summary> Local address of document.
-            </summary>
-        </member>
-        <member name="P:WebCrawler.Document.Id">
-            <summary> Id of document.
-            </summary>
-        </member>
-        <member name="P:WebCrawler.Document.Neighbours">
-            <summary> List of documents of web addresses found in this document.
             </summary>
         </member>
     </members>

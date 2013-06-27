@@ -106,7 +106,7 @@ namespace InternetRobot
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
             dlg.DefaultExt = ".csv";
             dlg.Filter = "Csv documents (.csv)|*.csv";
-            Nullable<bool> result = dlg.ShowDialog();
+            bool? result = dlg.ShowDialog();
             if (result == true)
             {
                 subHeaderText.Text = "Saving statistics...";
