@@ -76,7 +76,7 @@ namespace WebCrawler
             for (int i = 0; i < workingThreads; i++)
             {
                 IRobotRunner runner = new RobotRunner(filter,this);
-                Thread thread = new Thread(new ThreadStart(runner.CrawlPage));
+                Thread thread = new Thread(runner.CrawlPage);
                 threadList.Add(thread);
             }
             string acceptableAddress;

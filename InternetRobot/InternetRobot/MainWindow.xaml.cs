@@ -22,7 +22,7 @@ namespace InternetRobot
     public partial class MainWindow : Window
     {
         RobotManager robotManager;
-        const int MAX_THREAD_COUNT = 12;
+        const int MAX_THREAD_COUNT = 50;
         RobotFinishedCallBack callBack;
         List<Document> documents;
 
