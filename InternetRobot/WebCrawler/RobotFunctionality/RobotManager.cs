@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Net;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Threading;
 
 namespace WebCrawler
 {
@@ -11,10 +11,12 @@ namespace WebCrawler
     /// </summary>
     public class RobotManager : IRobotManager
     {
-        private Queue<Document> addressQueue;
-        private List<Document> finishedAddresses;
+        private Queue<WebDocument> addressQueue;
+        private List<WebDocument> finishedAddresses;
         private volatile int workingThreads;
         private List<Thread> threadList;
+
+        private string downloadPath;
 
         /// <summary> Occurs when all robot work is finished.
         /// </summary>
@@ -22,11 +24,13 @@ namespace WebCrawler
 
         /// <summary> Initializes a new RobotManager instance.
         /// </summary>
-        public RobotManager()
+        public RobotManager(string downloadPath)
         {
-            addressQueue = new Queue<Document>();
-            finishedAddresses = new List<Document>();
+            addressQueue = new Queue<WebDocument>();
+            finishedAddresses = new List<WebDocument>();
             threadList = new List<Thread>();
+
+            this.downloadPath = downloadPath;
         }
 
         /// <summary> Raises workfinished event.
@@ -59,8 +63,8 @@ namespace WebCrawler
             workingThreads = threadNumber;
             string hostAddress = DomainAddress(address);
             string robotAddress = "http://" + hostAddress + "/robots.txt";
-            string localAddress = Path.Combine(Path.GetTempPath(), "robotsInternetRobot.txt");
-            if (File.Exists(localAddress)) 
+            string localAddress = Path.Combine(downloadPath, "robotsInternetRobot.txt");
+            if (File.Exists(localAddress))
                 File.Delete(localAddress);
             WebClient client = new WebClient();
             try
@@ -75,7 +79,7 @@ namespace WebCrawler
             IRobotFilter filter = new RobotFilter(localAddress, hostAddress);
             for (int i = 0; i < workingThreads; i++)
             {
-                IRobotRunner runner = new RobotRunner(filter,this);
+                IRobotRunner runner = new RobotRunner(filter, this, downloadPath);
                 Thread thread = new Thread(runner.CrawlPage);
                 threadList.Add(thread);
             }
@@ -108,24 +112,24 @@ namespace WebCrawler
 
         private void RemoveEmptyDocs()
         {
-            foreach (Document d in finishedAddresses)
+            foreach (WebDocument d in finishedAddresses)
             {
-                d.Neighbours.RemoveAll((document) =>  document.DiscAddress == null );
+                d.Neighbours.RemoveAll((document) => document.DiscAddress == null);
             }
-            finishedAddresses.RemoveAll((document) => document.DiscAddress == null );
+            finishedAddresses.RemoveAll((document) => document.DiscAddress == null);
         }
 
         /// <summary> Adds page from specified URL to collection, returning its Document.
         /// </summary>
-        public Document AddPageToCollection(string address)
+        public WebDocument AddPageToCollection(string address)
         {
             lock (this)
             {
                 string addressNormalized = address.NormalizeForUrl();
-                Document doc = new Document(addressNormalized);
-                Document resultUnfinished = addressQueue.FirstOrDefault(
+                WebDocument doc = new WebDocument(addressNormalized);
+                WebDocument resultUnfinished = addressQueue.FirstOrDefault(
                     (document) => { return document.Equals(doc); });
-                Document resultFinished = finishedAddresses.FirstOrDefault(
+                WebDocument resultFinished = finishedAddresses.FirstOrDefault(
                     (document) => { return document.Equals(doc); });
                 if (resultUnfinished == null && resultFinished == null)
                     addressQueue.Enqueue(doc);
@@ -137,13 +141,13 @@ namespace WebCrawler
 
         /// <summary> Gets one page from collection, returning its Document.
         /// </summary>
-        public Document GetPageFromCollection()
+        public WebDocument GetPageFromCollection()
         {
             lock (this)
             {
                 if (addressQueue.Count > 0)
                 {
-                    Document doc = addressQueue.Dequeue();
+                    WebDocument doc = addressQueue.Dequeue();
                     finishedAddresses.Add(doc);
                     return doc;
                 }
@@ -168,14 +172,14 @@ namespace WebCrawler
                 if (workingThreads == 0)
                 {
                     OnWorkFinished(EventArgs.Empty);
-                }                
+                }
                 return workingThreads;
             }
         }
 
         /// <summary> Returns list of already crawled documents.
         /// </summary>
-        public List<Document> FinishedAddresses() 
+        public List<WebDocument> FinishedAddresses()
         {
             return finishedAddresses;
         }

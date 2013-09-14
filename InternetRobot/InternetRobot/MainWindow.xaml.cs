@@ -1,16 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using WebAnalyzer.Interfaces;
 using WebCrawler;
 
 namespace InternetRobot
@@ -24,7 +15,8 @@ namespace InternetRobot
         RobotManager robotManager;
         const int MAX_THREAD_COUNT = 50;
         RobotFinishedCallBack callBack;
-        List<Document> documents;
+        List<WebDocument> documents;
+        private string downloadPath = "C:\\crawler\\9-14-2013";
 
         public MainWindow()
         {
@@ -32,7 +24,7 @@ namespace InternetRobot
             runButton.IsEnabled = true;
             saveButton.IsEnabled = false;
             stopButton.IsEnabled = false;
-            documents = new List<Document>();
+            documents = new List<WebDocument>();
             callBack = this.UpdateWhenStopped;
         }
 
@@ -65,15 +57,32 @@ namespace InternetRobot
         {
             robotManager.StopRobot();
             subHeaderText.Text = "Work finished. You may save statistics to file.";
-            SetStillMode();   
+            SetStillMode();
         }
 
         private void runButton_Click(object sender, RoutedEventArgs e)
         {
             subHeaderText.Text = "Robot is working, please wait.";
+
+            downloadPath = downloadDirectoryText.Text;
+            if (downloadPath == "")
+            {
+                downloadPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "crawler");
+            }
+
+            downloadPath = System.IO.Path.Combine(downloadPath, DateTime.Now.ToString("yyyy/d/M/HH/mm/ss"));
+
+
+            if (!System.IO.Directory.Exists(downloadPath))
+                System.IO.Directory.CreateDirectory(downloadPath);
+
+            this.downloadDirectoryText.Text = downloadPath;
+
+            subHeaderText.Text += "Download documents to - " + downloadPath;
+
             int threadCount = 1;
             SetRunMode();
-            robotManager = new RobotManager();
+            robotManager = new RobotManager(downloadPath);
             callBack = this.UpdateWhenStopped;
             robotManager.WorkFinishedHandler += WorkFinished;
             try
@@ -92,7 +101,7 @@ namespace InternetRobot
                 threadCount = MAX_THREAD_COUNT;
                 threadTextBox.Text = MAX_THREAD_COUNT.ToString();
             }
-            robotManager.StartRobot(threadCount,addressTextBox.Text);
+            robotManager.StartRobot(threadCount, addressTextBox.Text);
         }
 
         private void stopButton_Click(object sender, RoutedEventArgs e)
@@ -119,6 +128,12 @@ namespace InternetRobot
                 stats.WorkFinishedHandler += WorkFinished;
                 stats.Save(fileName);
             }
+        }
+
+        private void analyzyButton_Click(object sender, RoutedEventArgs e)
+        {
+            IDomunetsAnalyzer analyzer = new WebAnalyzer.Analyzer();
+            analyzer.Analyze(this.downloadPath);
         }
     }
 }

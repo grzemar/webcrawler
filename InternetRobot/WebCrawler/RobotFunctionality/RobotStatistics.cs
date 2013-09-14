@@ -9,11 +9,11 @@ namespace WebCrawler
     /// </summary>
     public class RobotStatistics : IRobotStatistics
     {
-        List<Document> list;
+        List<WebDocument> list;
 
         /// <summary> Initializes a new RobotRunner instance 
         /// </summary>
-        public RobotStatistics(List<Document> list)
+        public RobotStatistics(List<WebDocument> list)
         {
             this.list = list;
         }
@@ -48,16 +48,16 @@ namespace WebCrawler
         /// </summary>
         public void SaveToCsv(string fileName)
         {
-            foreach (Document d in list)
+            foreach (WebDocument d in list)
             {
                 d.Id = d.HttpAddress.EscapeUrl();
             }
             using (StreamWriter sw = new StreamWriter(fileName))
             {
-                foreach (Document d in list)
+                foreach (WebDocument d in list)
                 {
                     sw.Write(d.Id);
-                    foreach (Document neighbour in d.Neighbours)
+                    foreach (WebDocument neighbour in d.Neighbours)
                     {
                         sw.Write(';');
                         sw.Write(neighbour.Id);

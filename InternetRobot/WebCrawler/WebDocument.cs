@@ -5,7 +5,7 @@ namespace WebCrawler
 {
     /// <summary> Represents document downloaded from web.
     /// </summary>
-    public class Document : IEquatable<Document>
+    public class WebDocument : IEquatable<WebDocument>
     {
         /// <summary> Web address of document.
         /// </summary>
@@ -33,7 +33,7 @@ namespace WebCrawler
 
         /// <summary> List of documents of web addresses found in this document.
         /// </summary>
-        public List<Document> Neighbours 
+        public List<WebDocument> Neighbours 
         {
             get; 
             private set;
@@ -41,15 +41,15 @@ namespace WebCrawler
 
         /// <summary> Initializes new document with a specified web address.
         /// </summary>
-        public Document(string httpAddress)
+        public WebDocument(string httpAddress)
         {
-            Neighbours = new List<Document>();
+            Neighbours = new List<WebDocument>();
             HttpAddress = httpAddress;
         }
 
         /// <summary> Adds new document with address found in this document to list.
         /// </summary>
-        public void AddNeighbour(Document desc)
+        public void AddNeighbour(WebDocument desc)
         {
             lock (this)
             {
@@ -59,7 +59,7 @@ namespace WebCrawler
 
         /// <summary> IEquatable Method for comparing document with other documents basing on their web addresses.
         /// </summary>
-        public bool Equals(Document other)
+        public bool Equals(WebDocument other)
         {
             if (Object.ReferenceEquals(other, null)) return false;
 
