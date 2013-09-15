@@ -139,6 +139,21 @@ namespace InternetRobot
 
         private void analyzyButton_Click(object sender, RoutedEventArgs e)
         {
+            analyzyLogic();
+        }
+
+        private void trainingButton_Click(object sender, RoutedEventArgs e)
+        {
+            trainingLogic();
+        }
+
+        private void classifyButton_Click(object sender, RoutedEventArgs e)
+        {
+            classifyLogic();
+        }
+
+        private void analyzyLogic()
+        {
             downloadPath = downloadDirectoryText.Text;
             if (downloadPath == "")
             {
@@ -157,7 +172,7 @@ namespace InternetRobot
             analyzer.Analyze(this.downloadPath);
         }
 
-        private void classifyButton_Click(object sender, RoutedEventArgs e)
+        private void trainingLogic()
         {
             classifier = new Classifier();
             string pathToClassify = System.IO.Path.Combine(this.downloadPath, "config.txt");
@@ -186,7 +201,7 @@ namespace InternetRobot
             classifier.TrainClassifier(analyzer.Documents.Where(doc => doc.DocumentClass != String.Empty));
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void classifyLogic()
         {
             classifier.ClassifyDocuments(analyzer.Documents);
             string pathToClassify = System.IO.Path.Combine(this.downloadPath, "results.txt");
@@ -218,6 +233,13 @@ namespace InternetRobot
                     writer.WriteLine("");
                 }
             }
+        }
+
+        private void Analyze_training_calssifyall_Button_Click(object sender, RoutedEventArgs e)
+        {
+            analyzyLogic();
+            trainingLogic();
+            classifyLogic();
         }
     }
 }
