@@ -1,12 +1,11 @@
 ﻿using NaiveBayesClassifier;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using WebAnalyzer;
 using WebAnalyzer.Interfaces;
 using WebCrawler;
-using System.Linq.Expressions;
-using System.Linq;
 
 namespace InternetRobot
 {
@@ -191,11 +190,32 @@ namespace InternetRobot
         {
             classifier.ClassifyDocuments(analyzer.Documents);
             string pathToClassify = System.IO.Path.Combine(this.downloadPath, "results.txt");
+
+            var grouped = analyzer.Documents
+                                .GroupBy(x => x.DocumentClass)
+                                .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+
             using (System.IO.StreamWriter writer = new System.IO.StreamWriter(pathToClassify))
             {
-                foreach (WebAnalyzer.Document doc in analyzer.Documents)
+                foreach (var pair in grouped)
                 {
-                    writer.WriteLine(doc.Path + doc.DocumentClass);
+                    writer.WriteLine(pair.Key + "\t" + pair.Value.Count);
+                }
+                writer.WriteLine("---------------------------------------------");
+                writer.WriteLine("");
+                writer.WriteLine("");
+
+                foreach (var pair in grouped)
+                {
+                    writer.WriteLine("Kategoria : " + pair.Key);
+
+                    foreach (var singleDocument in pair.Value)
+                    {
+                        writer.WriteLine(singleDocument.Path);
+                    }
+                    writer.WriteLine("---------------------------------------------");
+                    writer.WriteLine("");
+                    writer.WriteLine("");
                 }
             }
         }
