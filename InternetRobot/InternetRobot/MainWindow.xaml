@@ -19,5 +19,7 @@
         <TextBlock Canvas.Left="48" TextWrapping="Wrap" Text="Local dir" Canvas.Top="217" Width="56"/>
         <TextBox Name="downloadDirectoryText" Height="23" Canvas.Left="118" TextWrapping="Wrap" Text="C:\crawler" Canvas.Top="217" Width="285"/>
         <Button Content="Start Analyzy" Canvas.Left="48" Canvas.Top="245" Width="183"  Name="analyzyButton" Click="analyzyButton_Click"/>
+        <Button Content="Start training" Canvas.Left="237" Canvas.Top="245" Width="166" Name="classifyButton" Click="classifyButton_Click"/>
+        <Button Content="Classify all" Canvas.Left="48" Canvas.Top="281" Width="355" Click="Button_Click_1"/>
     </Canvas> 
 </Window>

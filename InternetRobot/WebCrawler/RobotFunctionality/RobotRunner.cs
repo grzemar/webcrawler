@@ -70,7 +70,10 @@ namespace WebCrawler
         {
             try
             {
-                client.DownloadFile(address, discAddress);
+                if (!System.IO.File.Exists(discAddress))
+                {
+                    client.DownloadFile(address, discAddress);
+                }
                 return true;
             }
             catch (WebException)

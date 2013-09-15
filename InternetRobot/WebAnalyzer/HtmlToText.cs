@@ -4,6 +4,7 @@
 
 #region
 
+using System;
 using System.IO;
 
 #endregion
@@ -62,11 +63,28 @@ namespace HtmlAgilityPack.Samples
                     if (HtmlNode.IsOverlappedClosingElement(html))
                         break;
 
-                    // check the text is meaningful and not a bunch of whitespaces
-                    if (html.Trim().Length > 0)
+
+                    if (html.Contains("e.fn.jquery"))
                     {
-                        outText.Write(HtmlEntity.DeEntitize(html));
+                        break;
                     }
+
+                    string htmlcopy = html;
+                    try
+                    {
+
+                        // check the text is meaningful and not a bunch of whitespaces
+                        if (html.Trim().Length > 0)
+                        {
+                            outText.Write(HtmlEntity.DeEntitize(htmlcopy));
+                        }
+                    }
+                    catch (Exception exc)
+                    {
+                        html = htmlcopy;
+                    }
+
+
                     break;
 
                 case HtmlNodeType.Element:

@@ -72,6 +72,8 @@ namespace WebAnalyzer
 
             HtmlAgilityPack.Samples.HtmlToText toText = new HtmlAgilityPack.Samples.HtmlToText();
             string pureHtmlTxt = toText.Convert(this.Path);
+            pureHtmlTxt = pureHtmlTxt.ToLower();
+
             string[] wordsTab = pureHtmlTxt
                 .Trim()
                 .Split()

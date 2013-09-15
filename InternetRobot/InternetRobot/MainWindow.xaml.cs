@@ -1,8 +1,12 @@
-﻿using System;
+﻿using NaiveBayesClassifier;
+using System;
 using System.Collections.Generic;
 using System.Windows;
+using WebAnalyzer;
 using WebAnalyzer.Interfaces;
 using WebCrawler;
+using System.Linq.Expressions;
+using System.Linq;
 
 namespace InternetRobot
 {
@@ -17,6 +21,8 @@ namespace InternetRobot
         RobotFinishedCallBack callBack;
         List<WebDocument> documents;
         private string downloadPath = "C:\\crawler\\9-14-2013";
+        Analyzer analyzer;
+        IClassifier classifier;
 
         public MainWindow()
         {
@@ -26,6 +32,8 @@ namespace InternetRobot
             stopButton.IsEnabled = false;
             documents = new List<WebDocument>();
             callBack = this.UpdateWhenStopped;
+            IDomunetsAnalyzer analyzer = new WebAnalyzer.Analyzer();
+            classifier = new Classifier();
         }
 
         private void SetStillMode()
@@ -132,8 +140,64 @@ namespace InternetRobot
 
         private void analyzyButton_Click(object sender, RoutedEventArgs e)
         {
-            IDomunetsAnalyzer analyzer = new WebAnalyzer.Analyzer();
+            downloadPath = downloadDirectoryText.Text;
+            if (downloadPath == "")
+            {
+                downloadPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "crawler");
+            }
+
+            //downloadPath = System.IO.Path.Combine(downloadPath, DateTime.Now.ToString("yyyy/d/M/HH/mm/ss"));
+
+
+            // if (!System.IO.Directory.Exists(downloadPath))
+            //  System.IO.Directory.CreateDirectory(downloadPath);
+
+            this.downloadDirectoryText.Text = downloadPath;
+
+            analyzer = new WebAnalyzer.Analyzer();
             analyzer.Analyze(this.downloadPath);
+        }
+
+        private void classifyButton_Click(object sender, RoutedEventArgs e)
+        {
+            classifier = new Classifier();
+            string pathToClassify = System.IO.Path.Combine(this.downloadPath, "config.txt");
+            if (!System.IO.File.Exists(pathToClassify)) return;
+
+            using (System.IO.StreamReader reader = new System.IO.StreamReader(pathToClassify))
+            {
+                bool stopIt = false;
+                while (reader.Peek() != 0 && stopIt == false)
+                {
+                    try
+                    {
+                        string next = reader.ReadLine();
+                        if (next == null || next.Length < 1) stopIt = true;
+                        string[] values = next.Split(';');
+                        string fileName = values[0];
+                        string fileClass = values[1];
+                        string path = System.IO.Path.Combine(this.downloadPath, fileName);
+                        foreach (WebAnalyzer.Document document in analyzer.Documents.Where((doc) => doc.Path == path))
+                            document.DocumentClass = fileClass;
+                    }
+                    catch (Exception) { } //return; }
+                }
+
+            }
+            classifier.TrainClassifier(analyzer.Documents.Where(doc => doc.DocumentClass != String.Empty));
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            classifier.ClassifyDocuments(analyzer.Documents);
+            string pathToClassify = System.IO.Path.Combine(this.downloadPath, "results.txt");
+            using (System.IO.StreamWriter writer = new System.IO.StreamWriter(pathToClassify))
+            {
+                foreach (WebAnalyzer.Document doc in analyzer.Documents)
+                {
+                    writer.WriteLine(doc.Path + doc.DocumentClass);
+                }
+            }
         }
     }
 }

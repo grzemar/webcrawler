@@ -97,6 +97,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NaiveBayesClassifier\NaiveBayesClassifier.csproj">
+      <Project>{8146e3a8-1dd9-4934-bb51-806655880b8a}</Project>
+      <Name>NaiveBayesClassifier</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WebAnalyzer\WebAnalyzer.csproj">
       <Project>{80fac36f-3c4e-4ad8-80f8-c27993124bff}</Project>
       <Name>WebAnalyzer</Name>

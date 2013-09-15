@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCrawler", "WebCrawler\We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAnalyzer", "WebAnalyzer\WebAnalyzer.csproj", "{80FAC36F-3C4E-4AD8-80F8-C27993124BFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NaiveBayesClassifier", "NaiveBayesClassifier\NaiveBayesClassifier.csproj", "{8146E3A8-1DD9-4934-BB51-806655880B8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,16 @@ Global
 		{80FAC36F-3C4E-4AD8-80F8-C27993124BFF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{80FAC36F-3C4E-4AD8-80F8-C27993124BFF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{80FAC36F-3C4E-4AD8-80F8-C27993124BFF}.Release|x86.ActiveCfg = Release|Any CPU
+		{8146E3A8-1DD9-4934-BB51-806655880B8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8146E3A8-1DD9-4934-BB51-806655880B8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8146E3A8-1DD9-4934-BB51-806655880B8A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8146E3A8-1DD9-4934-BB51-806655880B8A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8146E3A8-1DD9-4934-BB51-806655880B8A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8146E3A8-1DD9-4934-BB51-806655880B8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8146E3A8-1DD9-4934-BB51-806655880B8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8146E3A8-1DD9-4934-BB51-806655880B8A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8146E3A8-1DD9-4934-BB51-806655880B8A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8146E3A8-1DD9-4934-BB51-806655880B8A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

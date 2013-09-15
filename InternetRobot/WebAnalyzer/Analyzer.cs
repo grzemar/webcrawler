@@ -1,20 +1,22 @@
 ﻿
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using WebAnalyzer.Interfaces;
+
 namespace WebAnalyzer
 {
     public class Analyzer : IDomunetsAnalyzer
     {
         // ścieżka do pliku na dysku
         public string DownloadPath { get; private set; }
-        public List<Document> documents { get; private set; }
+        public List<Document> Documents { get; private set; }
 
 
         public Analyzer()
         {
-            documents = new List<Document>();
+            Documents = new List<Document>();
         }
 
         public void Analyze(string pathToDocumetnsDirecotry)
@@ -39,23 +41,58 @@ namespace WebAnalyzer
                         // TODO : przypuszczanie moze trwac dlugo - powinno odbywac sie w osobnym wateku
                         newDocument.AnalyzeMe();
 
-                        documents.Add(newDocument);
+                        Documents.Add(newDocument);
                     }
 
                 }
-
-                int a = 5;
+                makeOneBigDictionary();
             }
         }
+
+        private void makeOneBigDictionary()
+        {
+            SortedDictionary<string, int> oneBigDictionary = new SortedDictionary<string, int>();
+
+            foreach (Document currentDoc in this.Documents)
+            {
+                var dictionaryToMerge = currentDoc.WordsCount;
+
+                Utils.MergeDictionaries<string, int>(oneBigDictionary, dictionaryToMerge);
+            }
+
+            var oneBigSortedDictionary = oneBigDictionary
+                .OrderBy(i => i.Value)
+                .ToDictionary(x => x.Key, x => x.Value);
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(DownloadPath + @"\oneBigSortedDictionary.txt", true))
+            {
+                foreach (var item in oneBigSortedDictionary)
+                {
+                    file.WriteLine(item.Value.ToString() + "\t\t" + item.Key.ToString());
+                }
+            }
+        }
+
 
         private bool hasDisallowedEnding(string filePath)
         {
             List<string> disallowedExteinsion = new List<string>();
             disallowedExteinsion.Add(".js");
             disallowedExteinsion.Add(".css");
+            disallowedExteinsion.Add(".png");
+            disallowedExteinsion.Add(".jpg");
+            disallowedExteinsion.Add(".jpeg");
+            disallowedExteinsion.Add(".gif");
+            disallowedExteinsion.Add(".svg");
+
 
             if (!Path.HasExtension(filePath)) return true;
             if (disallowedExteinsion.Contains(Path.GetExtension(filePath))) return true;
+
+            if (filePath.Contains("_js_jquery")) return true;
+            if (filePath.Contains("js_ver")) return true;
+            if (filePath.Contains("js_")) return true;
+
 
             return false;
         }
