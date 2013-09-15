@@ -25,16 +25,17 @@ namespace WebAnalyzer
 
             if (System.IO.Directory.Exists(DownloadPath))
             {
-                string[] filePaths = Directory.GetFiles(DownloadPath, "*.*", SearchOption.TopDirectoryOnly);
+                string[] filePaths = Directory.GetFiles(DownloadPath);//, "*.*", SearchOption.TopDirectoryOnly);
+                //string[] filePaths = Directory.GetFiles(DownloadPath, "*.*", SearchOption.TopDirectoryOnly);
 
                 foreach (string filePath in filePaths)
                 {
-                    Encoding encoding;
-                    bool isTextFile = IsText(out encoding, filePath, 1024);
+                    //Encoding encoding;
+                    //bool isTextFile = IsText(out encoding, filePath, 1024);
                     bool disallowedEnding = hasDisallowedEnding(filePath);
 
 
-                    if (isTextFile && !disallowedEnding)
+                    if (/*isTextFile &&*/ !disallowedEnding)
                     {
                         Document newDocument = new Document(filePath);
 
@@ -43,7 +44,6 @@ namespace WebAnalyzer
 
                         Documents.Add(newDocument);
                     }
-
                 }
                 makeOneBigDictionary();
             }
